@@ -89,7 +89,11 @@ func strategyMarginBot(bconf BotConfig, dryRun bool) (err error) {
 
 	// Calculate minimum loan size
 	minLoan := bconf.Bitfinex.MinLoanUSD
-	if activeWallet != "usd" {
+        // NOTE Since there are no fiat-to-fiat pairs (eg. USD-EUR), MinLoanUSD cannot be derived from a correspending USD ticker.
+        //      As long as 1 EUR >= 1 USD, 1 GBP >= 1 USD and so forth, this should work fine. The long term solution is either to
+        //      wait until fiat-to-fiat pairs exist on BitFinex and then reduce this line back to 'if activeWallet != "usd"' or to
+        //      hard code limits or to calculate the fiat-to-fiat relations via a crypto currency (eg 1 EUR = x BTC, x BTC = y USD).
+	if activeWallet != "eur" && activeWallet != "gbp" && activeWallet != "jpy" && activeWallet != "usd" {
 		log.Println("\tGetting current " + activeWallet + " ticker...")
 
 		ticker, err := api.Ticker(activeWallet + "usd")
